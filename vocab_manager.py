@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Sat May 13 17:54:41 2017
-
-@author: RealRobert
-"""
 
 from gensim.models import word2vec
 import operator
@@ -16,7 +11,7 @@ class VocabManager():
     vocab = model.vocab
     solo_kanji = []
     
-    def __init__(self,n=100):
+    def __init__(self,n=100):	# upon initialization creates a list of top-n frequently used solo kanji, available at .solo_kanji
         if n > 1000:
             n = 1000
         counter = -1
@@ -25,7 +20,7 @@ class VocabManager():
             if len(self.model.index2word[counter]) == 1:
                 self.solo_kanji.append(self.model.index2word[counter])
     
-    def top_kanji_everywhere(self,kanji,n=100):
+    def top_kanji_everywhere(self,kanji,n=100): # returns a list of of top-n frequently used words containing specified kanji
         raw_list = []
         counter = -1
         counter_success = 0
@@ -34,13 +29,13 @@ class VocabManager():
             try:
                 if (kanji in model.index2word[counter])&(kanji != model.index2word[counter]):
                     raw_list.append(model.index2word[counter])
-                    counter_success += 1
+                    counter_success += 1 # len!
             except IndexError:
                 print(counter)
         self.last_raw_list = raw_list
         return raw_list
         
-    def endswith_top_kanji_everywhere(self,kanji,n=100):
+    def endswith_top_kanji_everywhere(self,kanji,n=100):  # returns a list of of top-n frequently used words ending with specified kanji
         raw_list = []
         counter = -1
         counter_success = 0
@@ -49,20 +44,21 @@ class VocabManager():
             try:
                 if (model.index2word[counter].endswith(kanji))&(kanji != model.index2word[counter]):
                     raw_list.append(model.index2word[counter])
-                    counter_success += 1
+                    counter_success += 1 # len!
             except IndexError:
                 print(counter)
         self.last_raw_list = raw_list
         return raw_list
     
-    def kanji_everywhere(self,kanji):
+    def kanji_everywhere(self,kanji): # depr
         raw_list = []
         for item in self.vocab:
             if kanji in item:
                 raw_list.append(item)
         return raw_list
 
-    def estimate_convergention(self,kanji,n = 100,mode = None):
+    def estimate_convergention(self,kanji,n = 100,mode = None): # returns list of neighbours of top-n frequently used words with kanji list
+								# either "kanji in word" or "word ends with kanji"
         if not mode:
             return model.most_similar(self.top_kanji_everywhere(kanji,n))
         else:
